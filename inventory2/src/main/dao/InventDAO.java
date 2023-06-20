@@ -12,7 +12,6 @@ import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import main.models.JoinClass2;
@@ -34,7 +33,6 @@ import main.models.warehouseModels.ProductName;
 import main.models.warehouseModels.TotalStock;
 import main.models.warehouseModels.productquant;
 
-@Component
 public class InventDAO {
 	// Custom query methods, if needed
 	@PersistenceContext
@@ -79,8 +77,7 @@ public class InventDAO {
 				System.out.println(s.toString());
 			}
 			return s;
-		}
-		else if (p.getVendor_id() != 0 && p.getPurchase_order_expected_date() == null) {
+		} else if (p.getVendor_id() != 0 && p.getPurchase_order_expected_date() == null) {
 			List<PurchaseId> s = em.createQuery(
 					"SELECT new main.models.PurchaseId(s.purchase_order_id) from Im_Purchase_Order s where s.vendor_id=:v",
 					PurchaseId.class).setParameter("v", p.getVendor_id()).getResultList();
@@ -88,17 +85,16 @@ public class InventDAO {
 				System.out.println(s.toString());
 			}
 			return s;
-	 }
-			 else if (p.getVendor_id() == 0 && p.getPurchase_order_expected_date()!= null) {
-					List<PurchaseId> s = em.createQuery(
-							"SELECT new main.models.PurchaseId(s.purchase_order_id) from Im_Purchase_Order s where s.purchase_order_expected_date=:dat",
-							PurchaseId.class).setParameter("dat", Date.valueOf(p.getPurchase_order_expected_date())).getResultList();
-					for (PurchaseId x : s) {
-						System.out.println(s.toString());
-					}
+		} else if (p.getVendor_id() == 0 && p.getPurchase_order_expected_date() != null) {
+			List<PurchaseId> s = em.createQuery(
+					"SELECT new main.models.PurchaseId(s.purchase_order_id) from Im_Purchase_Order s where s.purchase_order_expected_date=:dat",
+					PurchaseId.class).setParameter("dat", Date.valueOf(p.getPurchase_order_expected_date()))
+					.getResultList();
+			for (PurchaseId x : s) {
+				System.out.println(s.toString());
+			}
 			return s;
-			 }
-		 else {
+		} else {
 			List<PurchaseId> s = em.createQuery(
 					"SELECT new main.models.PurchaseId(s.purchase_order_id) from Im_Purchase_Order s where s.vendor_id=:v and s.purchase_order_expected_date=:dat",
 					PurchaseId.class).setParameter("v", p.getVendor_id())
@@ -109,22 +105,19 @@ public class InventDAO {
 			return s;
 		}
 
-	}		
+	}
 
-	
-	
 	@Transactional
 	public List<PurchaseReturnId> getPurchaseReturnsList(PurchasesReturnFilter p) {
-		if (p.getVendor_id() == 0 && p.getPurchase_return_date() == null && p.getGrn_value()==0) {
-			List<PurchaseReturnId> s = em
-					.createQuery("SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s",
-							PurchaseReturnId.class)
-					.getResultList();
+		if (p.getVendor_id() == 0 && p.getPurchase_return_date() == null && p.getGrn_value() == 0) {
+			List<PurchaseReturnId> s = em.createQuery(
+					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s",
+					PurchaseReturnId.class).getResultList();
 			for (PurchaseReturnId x : s) {
 				System.out.println(s.toString());
 			}
 			return s;
-		} else if (p.getVendor_id() != 0 && p.getPurchase_return_date() == null&& p.getGrn_value()==0) {
+		} else if (p.getVendor_id() != 0 && p.getPurchase_return_date() == null && p.getGrn_value() == 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.vendor_id=:v",
 					PurchaseReturnId.class).setParameter("v", p.getVendor_id()).getResultList();
@@ -132,51 +125,48 @@ public class InventDAO {
 				System.out.println(s.toString());
 			}
 			return s;
-		} 
-		else if (p.getVendor_id() != 0 && p.getPurchase_return_date() != null&& p.getGrn_value()==0) {
+		} else if (p.getVendor_id() != 0 && p.getPurchase_return_date() != null && p.getGrn_value() == 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.vendor_id=:v and s.purchase_return_date=:v1",
-					PurchaseReturnId.class).setParameter("v", p.getVendor_id()).setParameter("v1", Date.valueOf(p.getPurchase_return_date())).getResultList();
+					PurchaseReturnId.class).setParameter("v", p.getVendor_id())
+					.setParameter("v1", Date.valueOf(p.getPurchase_return_date())).getResultList();
 			for (PurchaseReturnId x : s) {
 				System.out.println(s.toString());
 			}
 			return s;
-		}
-		else if (p.getVendor_id() != 0 && p.getPurchase_return_date() == null&& p.getGrn_value()!=0)
-		{
+		} else if (p.getVendor_id() != 0 && p.getPurchase_return_date() == null && p.getGrn_value() != 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.vendor_id=:v and s.grn_cost=:v1",
-					PurchaseReturnId.class).setParameter("v", p.getVendor_id()).setParameter("v1",BigDecimal.valueOf( p.getGrn_value())).getResultList();
+					PurchaseReturnId.class).setParameter("v", p.getVendor_id())
+					.setParameter("v1", BigDecimal.valueOf(p.getGrn_value())).getResultList();
 			return s;
-		}
-		else if (p.getVendor_id() == 0 && p.getPurchase_return_date() != null&& p.getGrn_value()==0)
-		{
+		} else if (p.getVendor_id() == 0 && p.getPurchase_return_date() != null && p.getGrn_value() == 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.purchase_return_date=:v1",
-					PurchaseReturnId.class).setParameter("v1",Date.valueOf(p.getPurchase_return_date())).getResultList();
+					PurchaseReturnId.class).setParameter("v1", Date.valueOf(p.getPurchase_return_date()))
+					.getResultList();
 			return s;
-		}
-		else if (p.getVendor_id() == 0 && p.getPurchase_return_date() == null&& p.getGrn_value()!=0)
-		{
+		} else if (p.getVendor_id() == 0 && p.getPurchase_return_date() == null && p.getGrn_value() != 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.grn_cost=:v1",
-					PurchaseReturnId.class).setParameter("v1",BigDecimal.valueOf( p.getGrn_value())).getResultList();
+					PurchaseReturnId.class).setParameter("v1", BigDecimal.valueOf(p.getGrn_value())).getResultList();
 			return s;
-		}
-		else if (p.getVendor_id() == 0 && p.getPurchase_return_date() !=null&& p.getGrn_value()!=0)
-		{
+		} else if (p.getVendor_id() == 0 && p.getPurchase_return_date() != null && p.getGrn_value() != 0) {
 			List<PurchaseReturnId> s = em.createQuery(
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.grn_cost=:v1 and s.purchase_return_date=:v2",
-					PurchaseReturnId.class).setParameter("v1",BigDecimal.valueOf( p.getGrn_value())).setParameter("v2",Date.valueOf(p.getPurchase_return_date())).getResultList();
+					PurchaseReturnId.class).setParameter("v1", BigDecimal.valueOf(p.getGrn_value()))
+					.setParameter("v2", Date.valueOf(p.getPurchase_return_date())).getResultList();
 			return s;
 		}
-		
+
 		else {
 			System.out.println(p.getPurchase_return_date());
 			List<PurchaseReturnId> s = em.createQuery(
-					
+
 					"SELECT new main.models.PurchaseReturnId(s.purchase_return_id) from ImPurchaseReturn s where s.vendor_id=:v and s.purchase_return_date=:v1 and s.grn_cost=:v2",
-					PurchaseReturnId.class).setParameter("v", p.getVendor_id()).setParameter("v1", Date.valueOf(p.getPurchase_return_date())).setParameter("v2", BigDecimal.valueOf(p.getGrn_value())).getResultList();
+					PurchaseReturnId.class).setParameter("v", p.getVendor_id())
+					.setParameter("v1", Date.valueOf(p.getPurchase_return_date()))
+					.setParameter("v2", BigDecimal.valueOf(p.getGrn_value())).getResultList();
 			for (PurchaseReturnId x : s) {
 				System.out.println(s.toString());
 			}
